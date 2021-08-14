@@ -10,7 +10,6 @@ namespace CarDealerAPI.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         { 
-
         }
         public DbSet<Car> CarList { get; set; }
 

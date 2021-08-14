@@ -17,17 +17,15 @@ namespace CarDealerAPI.Services
 
         public DataContext Dbcontext { get; }
 
-        public async Task<Car> AddCarAsync(CarRequest carRequest)
+        public async Task<Car> AddCarAsync(Car car)
         {
-
             Car carAdded = new Car();         
 
-            carAdded.Id = new Guid();
-            carAdded.VIN = carRequest.VIN;
-            carAdded.Brand = carRequest.Brand;
-            carAdded.Model = carRequest.Model;
-            carAdded.Year = carRequest.Year;
-            carAdded.Price = carRequest.Price;
+            carAdded.VIN = car.VIN;
+            carAdded.Brand = car.Brand;
+            carAdded.Model = car.Model;
+            carAdded.Year = car.Year;
+            carAdded.Price = car.Price;
 
             Dbcontext.CarList.Add(carAdded);
             await Dbcontext.SaveChangesAsync();
@@ -50,17 +48,17 @@ namespace CarDealerAPI.Services
             await Dbcontext.SaveChangesAsync();
             return true;
         }
-        public async Task<CarRequest> UpdateCarAsync(CarRequest carRequest)
+        public async Task<CarRequest> UpdateCarAsync(CarRequest carRequest, string vin)
         {
-            Car car = new Car();
-            //car.Id = new Guid();
-            car.VIN = carRequest.VIN;
-            car.Brand = carRequest.Brand;
-            car.Model = carRequest.Model;
-            car.Year = carRequest.Year;
-            car.Price = carRequest.Price;
+            Car updatedCar = await GetCarByVINAsync(vin);
 
-            Dbcontext.CarList.Update(car);
+            updatedCar.VIN = vin;
+            updatedCar.Brand = carRequest.Brand;
+            updatedCar.Model = carRequest.Model;
+            updatedCar.Year = carRequest.Year;
+            updatedCar.Price = carRequest.Price;
+
+            Dbcontext.CarList.Update(updatedCar);
             await Dbcontext.SaveChangesAsync();
             return carRequest;
         }

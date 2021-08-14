@@ -8,9 +8,9 @@ namespace CarDealerAPI.Services
 {
     public interface ICarService
     {
-        Task<Car> AddCarAsync(CarRequest carRequest);
+        Task<Car> AddCarAsync(Car car);
         Task<ICollection <Car>> GetAllCarsAsync();
-        Task<CarRequest> UpdateCarAsync(CarRequest carRequest);
+        Task<CarRequest> UpdateCarAsync(CarRequest carRequest, string vin);
         Task<bool> DeleteCarAsync(string vin);
         Task<Car> GetCarByVINAsync(string vin);
     }

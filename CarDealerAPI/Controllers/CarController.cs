@@ -21,9 +21,9 @@ namespace CarDealerAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost(ApiRoutes.Car.AddCar)]
-        public async Task<IActionResult> CarAdd([FromBody] CarRequest carRequest)
+        public async Task<IActionResult> CarAdd([FromBody] Car car)
         {
-            var result = await CarService.AddCarAsync(carRequest);
+            var result = await CarService.AddCarAsync(car);
             return Ok(result);
         }
 
@@ -35,7 +35,7 @@ namespace CarDealerAPI.Controllers
             return Ok(result);
         }
         [AllowAnonymous]
-        [HttpPost(ApiRoutes.Car.UpdateCar)]
+        [HttpPut(ApiRoutes.Car.UpdateCar)]
         public async Task<IActionResult> UpdateCarAsync([FromRoute] string vin, [FromBody] CarRequest carRequest)
         {
             var updatedCar = await CarService.GetCarByVINAsync(vin);
@@ -43,12 +43,12 @@ namespace CarDealerAPI.Controllers
             {
                 return NotFound();
             }
-            updatedCar.VIN = carRequest.VIN;
+            updatedCar.VIN = vin;
             updatedCar.Brand = carRequest.Brand;
             updatedCar.Model = carRequest.Model;
             updatedCar.Year = carRequest.Year;
             updatedCar.Price = carRequest.Price;
-            var result = await CarService.UpdateCarAsync(carRequest);
+            var result = await CarService.UpdateCarAsync(carRequest,vin);
             return Ok(result);
         }
         [AllowAnonymous]
