@@ -11,11 +11,11 @@ namespace CarDealerAPI.Contracts
 
         public static class Car
         {
-            public const string AddCar = Base + "Car";
-            public const string GetAllCars = Base + "Car";
-            public const string GetCarByVIN = Base + "Car/{vin}";
-            public const string UpdateCar = Base + "Car/{vin}";
-            public const string DeleteCar = Base + "Car/{vin}";
+            public const string AddCar = Base + "Car/Add";
+            public const string GetAllCars = Base + "Car/GetAll";
+            public const string GetCarByVIN = Base + "Car/GetCar/{vin}";
+            public const string UpdateCar = Base + "Car/Update/{vin}";
+            public const string DeleteCar = Base + "Car/Delete/{vin}";
         }
     }
 }
