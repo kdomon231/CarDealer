@@ -9,15 +9,16 @@
     <Grid>
         <Button x:Name="getAllCarsButton" Content="GetAllCars" HorizontalAlignment="Left" Margin="38,52,0,0" VerticalAlignment="Top" Click="getAllCarsButton_Click"/>
         <Label x:Name="serverInfoLabel" Content="ServerInfo" HorizontalAlignment="Left" Margin="38,10,0,0" VerticalAlignment="Top"/>
-        <DataGrid x:Name="dataGrid" Margin="10,93,324,10"/>
+        <DataGrid x:Name="dataGrid" Margin="10,93,324,10" SelectionChanged="dataGrid_SelectionChanged"/>
         <Button x:Name="addCarButton" Content="AddCar" HorizontalAlignment="Left" Margin="701,217,0,0" VerticalAlignment="Top" Click="addCarButton_Click"/>
         <TextBox x:Name="vinTextBox" HorizontalAlignment="Left" Margin="625,93,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="brandTextBox" HorizontalAlignment="Left" Margin="625,116,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="modelTextBox" HorizontalAlignment="Left" Margin="625,139,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="yearTextBox" HorizontalAlignment="Left" Margin="625,162,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="priceTextBox" HorizontalAlignment="Left" Margin="625,185,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="deleteCarButton" Content="DeleteCar" HorizontalAlignment="Left" Margin="712,372,0,0" VerticalAlignment="Top" Click="deleteCarButton_Click"/>
-        <Button x:Name="updateCarButton" Content="UpdateCar" HorizontalAlignment="Left" Margin="597,217,0,0" VerticalAlignment="Top" Click="updateCarButton_Click"/>
+        <Button x:Name="deleteCarButton" Content="DeleteCar" HorizontalAlignment="Left" Margin="689,364,0,0" VerticalAlignment="Top" Click="deleteCarButton_Click"/>
+        <Button x:Name="updateCarButton" Content="UpdateCar" HorizontalAlignment="Left" Margin="537,217,0,0" VerticalAlignment="Top" Click="updateCarButton_Click"/>
+        <TextBox x:Name="deleteCarTextBox" HorizontalAlignment="Left" Margin="538,364,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
 
     </Grid>
 </Window>
