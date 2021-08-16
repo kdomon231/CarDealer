@@ -1,6 +1,7 @@
 ﻿using CarDealerWPFApp.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -21,6 +22,7 @@ namespace CarDealerWPFApp
 {
     public partial class MainWindow : Window
     {
+        private List<Car> listOfCars = new List<Car>();
         public MainWindow()
         {
             InitializeComponent();
@@ -28,29 +30,38 @@ namespace CarDealerWPFApp
 
         private async void getAllCarsButton_Click(object sender, RoutedEventArgs e)
         {
+            await GetAllCars();
+        }
+
+        private async Task GetAllCars()
+        {
             using (HttpClient client = new HttpClient())
             {
                 var response = await client.GetAsync("http://localhost:40419/api/v1/Car/GetAll");
-                response.EnsureSuccessStatusCode();
 
                 if (response.IsSuccessStatusCode)
                 {
                     var carResponse = await response.Content.ReadAsStringAsync();
-                    var carDeserialize = JsonSerializer.Deserialize<List<Car>>(carResponse);
-             
-                    dataGrid.ItemsSource = carDeserialize;
-                    serverInfoLabel.Content = "Car list loaded";
+                    listOfCars = JsonSerializer.Deserialize<List<Car>>(carResponse);
 
+                    dataGrid.ItemsSource = listOfCars;
+                    serverInfoLabel.Content = "Car list loaded";
                 }
                 else
                 {
-                    serverInfoLabel.Content = $"Server communication error {response.StatusCode}";
+                    serverInfoLabel.Content = $"Server error {response.StatusCode}";
                 }
             }
         }
 
         private async void addCarButton_Click(object sender, RoutedEventArgs e)
         {
+            await GetAllCars();
+            if (listOfCars.Exists(x => x.vin == vinTextBox.Text))
+            {
+                serverInfoLabel.Content = "Car with this VIN already exists";
+                return;
+            }
             using (HttpClient client = new HttpClient())
             {
                 Car newCar = new Car
@@ -66,26 +77,34 @@ namespace CarDealerWPFApp
                 var stringContent = new StringContent(carSerialize, Encoding.UTF8, "application/json");
                 var request = await client.PostAsync("http://localhost:40419/api/v1/Car/Add", stringContent);
 
-                request.EnsureSuccessStatusCode();
                 if (request.IsSuccessStatusCode)
                 {
+                    await GetAllCars();
                     serverInfoLabel.Content = "Car added";
                 }
                 else
                 {
-                    serverInfoLabel.Content = $"Server communication error {request.StatusCode}";
+                    serverInfoLabel.Content = $"Car adding error {request.StatusCode}";
                 }
-                
             }
         }
 
         private async void deleteCarButton_Click(object sender, RoutedEventArgs e)
         {
             using (HttpClient client = new HttpClient())
-            {                
-                var vin = deleteCarTextBox.Text;
-                var request = await client.DeleteAsync($"http://localhost:40419/api/v1/Car/Delete/{vin}");               
-                
+            {
+                var vin = vinLabel.Content;
+                var request = await client.DeleteAsync($"http://localhost:40419/api/v1/Car/Delete/{vin}");
+                await GetAllCars();
+
+                if (request.IsSuccessStatusCode)
+                {
+                    serverInfoLabel.Content = "Car removed";
+                }
+                else
+                {
+                    serverInfoLabel.Content = "Error! Car doesn't exist";
+                }
             }
         }
 
@@ -93,21 +112,56 @@ namespace CarDealerWPFApp
         {
             using (HttpClient client = new HttpClient())
             {
-                var vin = vinTextBox.Text;
-                var response = await client.GetAsync($"http://localhost:40419/api/v1/Car/GetCar/{vin}");
-                              
-                var carResponse = await response.Content.ReadAsStringAsync();
-                var carDeserialize = JsonSerializer.Deserialize<List<Car>>(carResponse);
-               
-                
+                Car updatedCar = new Car
+                {
+                    //vin = vinTextBox.Text,
+                    brand = brandTextBox.Text,
+                    model = modelTextBox.Text,
+                    year = Int32.Parse(yearTextBox.Text),
+                    price = Convert.ToDecimal(priceTextBox.Text)
+                };
+
+                var carSerialize = JsonSerializer.Serialize(updatedCar);
+                var stringContent = new StringContent(carSerialize, Encoding.UTF8, "application/json");
+
+                var vin = vinLabel.Content;
+                var request = await client.PutAsync($"http://localhost:40419/api/v1/Car/Update/{vin}", stringContent);
+
+                if (request.IsSuccessStatusCode)
+                {
+                    await GetAllCars();
+                    serverInfoLabel.Content = "Car updated";
+                }
+                else
+                {
+                    serverInfoLabel.Content = $"Error updating car {request.StatusCode}";
+                }
             }
         }
 
-        private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedCar = e.AddedItems[0] as Car;
-            deleteCarTextBox.Text = selectedCar.vin;
+            var carView = dataGrid.SelectedItem as Car;
+
+            if (carView != null)
+            {
+                vinLabel.Content = carView.vin;
+                brandTextBox.Text = carView.brand;
+                modelTextBox.Text = carView.model;
+                yearTextBox.Text = carView.year.ToString();
+                priceTextBox.Text = carView.price.ToString();
+            }
         }
 
+        private void clearFieldsButton_Click(object sender, RoutedEventArgs e)
+        {
+            vinLabel.Content = null;
+            vinTextBox.Text = null;
+            brandTextBox.Text = null;
+            modelTextBox.Text = null;
+            yearTextBox.Text = null;
+            priceTextBox.Text = null;
+            serverInfoLabel.Content = "Fields cleared";
+        }
     }
 }
